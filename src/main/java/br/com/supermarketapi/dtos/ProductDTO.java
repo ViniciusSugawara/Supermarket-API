@@ -5,6 +5,8 @@ public class ProductDTO {
     private String name;
     private String description;
     private String image;
+    private int quantity;
+    private boolean status;
 
     public Long getId() {
         return id;
@@ -36,5 +38,21 @@ public class ProductDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

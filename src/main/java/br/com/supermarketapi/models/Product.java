@@ -16,6 +16,7 @@ public class Product {
 
     //Placeholder - Will change to image later
     private String image;
+    private int quantity;
 
     private boolean status;
     @ManyToMany
@@ -52,6 +53,14 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public boolean isStatus() {
