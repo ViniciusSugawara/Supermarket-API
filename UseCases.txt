@@ -1,0 +1,62 @@
+Use cases:
+ 1: Authentication
+ 	- There will be a page asking for username and password
+	- After the data is inserted, the controller will send a request to a verification service
+	- The verification will return saved data from the repository, and verify if both data are equal.
+	- If successful, access will be granted for the user that is logging in
+	- If unsuccessful, return error message "Wrong username or password"
+
+ 2: Requests for Product (Admin only)
+  2.1: Create:
+   - The admin will send a post request with a requestBody with the product(Name, Description, Image)
+   - The service will verify if that exact same product already exists
+    - If true, return error message "Product already exists"
+	- If false, proceed
+   - The service will save the product in the database (ID creation is automated by configuration)
+   
+  2.2: Read
+   2.2.1: ReadAll
+   - The admin will send a get request
+   - The service will return a list of all the products registered
+   2.2.2: ReadByName
+   - The admin will send a get request, with pathVariable (name)
+   - The service will verify if said name exists
+    - If true, return the corresponding object
+	- If false, return error message "Product doesn't exist"
+   2.2.3: ReadByDescription
+   - The admin will send a get request, with pathVariable (description)
+   - The service will verify if said description exists
+    - If true, return the corresponding object
+	- If false, return error message "Product doesn't exist"
+	
+  2.3: Update
+   - The admin will send a put request with a RequestBody with the product (Name, Description, Image)
+   - The service will update the corresponding product
+   
+  2.4: Deactivate
+   - The admin will send a put request with a RequestBody with the product (Name, Description, Image), alongside a boolean value
+   - The service will update the corresponding product
+    - If the value is true, then the Product should be active
+	- If the value is false, then the Product should be inactive.
+	
+ 3: Requests for List of products (Client and Admin)
+  3.1: Create
+   - The client will send a post request with a RequestBody with the List of Products(Array of products)
+   - The service will verify if all products in the array exists in the database
+    - If true, the service will save the list in the database (ID creation is automated by configuration)
+    - If false, return error message "Tried to insert products that does not exist"
+
+  3.2: Update
+   - The client will send a put request with a RequestBody with the List of Products(Id, Array of Products)
+   - The service will update the List of products
+   
+  3.3: Delete
+   3.3.1: Delete
+    - The client will send a delete request with a ResponseBody with the List of products
+    - The service will delete the List of products
+   3.3.2: DeleteById
+    - The client will send a delete request with a pathvariable id
+    - The service will verify if a list exists with the id
+     - If true, the service will delete said list
+	 - If false, return error message "This id doesn't exist"
+	
