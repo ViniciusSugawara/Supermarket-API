@@ -1,7 +1,7 @@
 package br.com.supermarketapi.repositories;
 
-import br.com.supermarketapi.models.ListOfProducts;
+import br.com.supermarketapi.models.ListOfProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ListOfProductsRepository extends JpaRepository<ListOfProducts, Long> {
+public interface ListOfProductsRepository extends JpaRepository<ListOfProduct, Long> {
 }
