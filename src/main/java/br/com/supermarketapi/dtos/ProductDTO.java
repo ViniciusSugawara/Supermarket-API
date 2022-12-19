@@ -1,5 +1,10 @@
 package br.com.supermarketapi.dtos;
 
+import br.com.supermarketapi.models.ListOfProduct;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProductDTO {
     private Long id;
     private String name;
@@ -7,6 +12,7 @@ public class ProductDTO {
     private String image;
     private int quantity;
     private boolean status;
+    private List<ListOfProduct> productList = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -54,5 +60,13 @@ public class ProductDTO {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public List<ListOfProduct> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<ListOfProduct> productList) {
+        this.productList = productList;
     }
 }
