@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
@@ -20,9 +20,9 @@ public class Product {
 
     private boolean status;
     @ManyToMany
-    @JoinTable(name = "products_listofproducts", joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "listofproducts_id"))
-    private List<ListOfProducts> listOfProducts = new ArrayList<>();
+    @JoinTable(name = "products_listOfProducts", joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "listOfProduct_id"))
+    private List<ListOfProduct> productList = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -69,5 +69,13 @@ public class Product {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public List<ListOfProduct> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<ListOfProduct> productList) {
+        this.productList = productList;
     }
 }
