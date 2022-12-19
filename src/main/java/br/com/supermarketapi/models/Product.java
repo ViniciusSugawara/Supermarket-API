@@ -24,6 +24,17 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "listOfProduct_id"))
     private List<ListOfProduct> productList = new ArrayList<>();
 
+    public Product() {
+    }
+
+    public Product(String name, String description, String image, int quantity, boolean status) {
+        this.name = name;
+        this.description = description;
+        this.image = image;
+        this.quantity = quantity;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
