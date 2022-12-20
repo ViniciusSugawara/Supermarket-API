@@ -26,8 +26,14 @@ public class SecurityConfig{
             http.csrf().disable()
                     .authorizeHttpRequests((authz) -> authz.requestMatchers(HttpMethod.POST, "/product").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET,"/products", "/product/**").hasRole("ADMIN")
-                            .anyRequest().fullyAuthenticated()
+                            .requestMatchers("/admin").hasRole("ADMIN")
+                            .anyRequest().authenticated()
                     )
+                    .formLogin()
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/index")
+                    .permitAll()
+                    .and()
                     .httpBasic(withDefaults());
             return http.build();
         }
