@@ -34,6 +34,10 @@ public class SecurityConfig{
                     .defaultSuccessUrl("/index")
                     .permitAll()
                     .and()
+                    .headers()
+                    .frameOptions()
+                    .disable()
+                    .and()
                     .httpBasic(withDefaults());
             return http.build();
         }
