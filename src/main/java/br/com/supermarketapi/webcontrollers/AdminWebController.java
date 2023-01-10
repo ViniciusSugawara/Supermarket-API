@@ -23,19 +23,19 @@ public class AdminWebController {
     @GetMapping("/products")
     public String listProducts(Model model){
         model.addAttribute("products", productService.findAll());
-        return "admin/listProducts";
+        return "list-products";
     }
 
     @RequestMapping("/product/{id}")
     public String listProductById(Model model, @PathVariable("id")Long id){
         model.addAttribute("products", productService.findById(id));
-        return "admin/listProducts";
+        return "list-products";
     }
 
     //TODO Create insert product page
-    @PostMapping("/product")
+    @PostMapping("/insertProduct.html")
     public String store(@ModelAttribute ProductDTO productDTO){
         productService.save(productDTO);
-        return "admin/insertProduct";
+        return "insert-product";
     }
 }

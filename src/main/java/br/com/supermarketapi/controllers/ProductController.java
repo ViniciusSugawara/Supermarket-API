@@ -9,41 +9,57 @@ import org.springframework.web.bind.annotation.*;
 import br.com.supermarketapi.dtos.ProductDTO;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
-public class ProductController {
+@RequestMapping("/products")
+public class ProductController extends AbsController<ProductDTO> {
     private ProductService productService;
-
     public ProductController(ProductService productService) {
-        this.productService = productService;
+         this.productService = productService;
     }
-    @GetMapping("/products")
-    public ResponseEntity<List<Product>> findAll(){
+
+    @Override
+    public ResponseEntity<List<ProductDTO>> findAll() {
         return new ResponseEntity(productService.findAll(), HttpStatus.OK);
     }
-    @GetMapping("/product/{id}")
-    public ResponseEntity<ProductDTO> findById(@PathVariable("id")Long id){
-        return new ResponseEntity(productService.findById(id),HttpStatus.OK);
+
+    @Override
+    public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/product/name/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<Product> findByName(@PathVariable("name")String name){
         return new ResponseEntity(productService.findByName(name), HttpStatus.OK);
     }
-    @GetMapping("/product/description/{description}")
+    @GetMapping("/description/{description}")
     public ResponseEntity<Product> findByDescription(@PathVariable("description")String description){
         return new ResponseEntity(productService.findByDescription(description), HttpStatus.OK);
     }
-    @PostMapping("/product")
-    public ResponseEntity<Product> save(@RequestBody ProductDTO object){
+    @Override
+    public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO object){
         return new ResponseEntity(productService.save(object), HttpStatus.CREATED);
     }
-    @PutMapping("/product")
-    public ResponseEntity<Product> update(@RequestBody ProductDTO object){
+
+    @Override
+    public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO object){
         return new ResponseEntity(productService.update(object),HttpStatus.CREATED);
     }
-    @PutMapping("/product/deactivate/{status}")
+    @PutMapping("/deactivate/{status}")
     public ResponseEntity<Product> deactivate(@RequestBody ProductDTO object, @PathVariable("status")String status){
         return new ResponseEntity(productService.deactivate(object, status), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity delete(ProductDTO object) {
+        this.productService.delete(object);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity deleteById(Long id) {
+        this.productService.deleteById(id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

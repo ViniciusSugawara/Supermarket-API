@@ -1,20 +1,25 @@
 package br.com.supermarketapi.dataloader;
 
-import br.com.supermarketapi.models.ListOfProduct;
+import br.com.supermarketapi.models.ClientList;
+import br.com.supermarketapi.models.OrderDetails;
 import br.com.supermarketapi.models.Product;
-import br.com.supermarketapi.repositories.ListOfProductsRepository;
+import br.com.supermarketapi.repositories.ClientListRepository;
+import br.com.supermarketapi.repositories.OrderDetailsRepository;
 import br.com.supermarketapi.repositories.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Bootstrap  implements CommandLineRunner {
+public class Bootstrap implements CommandLineRunner {
     private final ProductRepository productRepository;
-    private final ListOfProductsRepository listOfProductsRepository;
+    private final ClientListRepository clientListRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
 
-    public Bootstrap(ProductRepository productRepository, ListOfProductsRepository listOfProductsRepository) {
+    public Bootstrap(ProductRepository productRepository, ClientListRepository clientListRepository,
+                     OrderDetailsRepository orderDetailsRepository) {
         this.productRepository = productRepository;
-        this.listOfProductsRepository = listOfProductsRepository;
+        this.clientListRepository = clientListRepository;
+        this.orderDetailsRepository = orderDetailsRepository;
     }
 
 
@@ -35,11 +40,20 @@ public class Bootstrap  implements CommandLineRunner {
         productRepository.save(product3);
         System.out.println("Saved products.");
 
-        ListOfProduct listOfProduct = new ListOfProduct();
-        listOfProduct.getShoplist().add(product1);
-        listOfProduct.getShoplist().add(product3);
+        ClientList clientList = new ClientList("Person");
 
-        listOfProductsRepository.save(listOfProduct);
+        clientListRepository.save(clientList);
+
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setClientList(clientList);
+        orderDetails.setProduct_order(product1);
+        orderDetailsRepository.save(orderDetails);
+
+        OrderDetails orderDetails1 = new OrderDetails();
+        orderDetails1.setClientList(clientList);
+        orderDetails1.setProduct_order(product3);
+        orderDetailsRepository.save(orderDetails1);
+
         System.out.println("Saved list.");
     }
 }

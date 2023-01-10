@@ -1,7 +1,8 @@
 package br.com.supermarketapi.services;
 
 import br.com.supermarketapi.dtos.ProductDTO;
-import br.com.supermarketapi.models.ListOfProduct;
+import br.com.supermarketapi.models.ClientList;
+import br.com.supermarketapi.models.OrderDetails;
 import br.com.supermarketapi.repositories.ProductRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -97,20 +98,18 @@ public class ProductService implements CrudService<ProductDTO, Long> {
     }
 
     private ProductDTO filterProduct(Product product){
-        List<ListOfProduct> filteredProducts = new ArrayList<>();
+        List<ClientList> filteredProducts = new ArrayList<>();
         ProductDTO productDTO = new ProductDTO();
         BeanUtils.copyProperties(product, productDTO);
 
-        for(ListOfProduct listOfProduct : product.getProductList()){
-            filteredProducts.add(filterListProducts(listOfProduct));
+        for(OrderDetails order : productDTO.getOrderDetails()){
+            filteredProducts.add(filterListProducts(order.getClientList()));
         }
-        productDTO.setProductList(filteredProducts);
+        productDTO.setOrderDetails(productDTO.getOrderDetails());
         return productDTO;
     }
-    // Metodo criado para que nao seja retornado um conjunto redundante de autor, que eh lido dentro do JSON
-    // causando erro de stack overflow.
-    private ListOfProduct filterListProducts(ListOfProduct product){
-        ListOfProduct prototype = new ListOfProduct();
+    private ClientList filterListProducts(ClientList product){
+        ClientList prototype = new ClientList();
         BeanUtils.copyProperties(product, prototype , "shoplist");
         return prototype;
     }

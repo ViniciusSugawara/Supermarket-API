@@ -1,29 +1,20 @@
 package br.com.supermarketapi.webcontrollers;
 
-import br.com.supermarketapi.dtos.ListOfProductDTO;
-import br.com.supermarketapi.services.ListOfProductsService;
+import br.com.supermarketapi.services.ClientListService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/client")
 @Controller
 public class ClientWebController {
-    private final ListOfProductsService listOfProductsService;
+    private final ClientListService clientListService;
 
-    public ClientWebController(ListOfProductsService listOfProductsService) {
-        this.listOfProductsService = listOfProductsService;
+    public ClientWebController(ClientListService clientListService) {
+        this.clientListService = clientListService;
     }
     @RequestMapping({"","/","index","/index.html"})
     public String getIndex(){
         return "client/index.html";
     }
-//    @RequestMapping("/shoplists")
-//    public String listShoplist(Model model){
-//        model.addAttribute("shoplists", listOfProductsService.findAll());
-//        model.addAttribute("products", listOfProductsService.findAll()
-//                .stream()
-//                .map(ListOfProductDTO::getShoplist));
-//        return "client/shoplist";
-//    }
+
 }
