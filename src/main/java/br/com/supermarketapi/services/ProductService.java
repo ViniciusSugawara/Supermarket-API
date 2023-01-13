@@ -68,6 +68,42 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
         return productDTOPage;
     }
 
+    public List<ProductWithOrderID> findAllFiltered(String filterParameter){
+        List<Product> listProducts = productRepository.findAll();
+        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
+
+        for(Product product : listProducts){
+            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
+            productWithOrderID.setCategory_name(product.getCategory().getName());
+
+            product.getOrderDetails()
+                    .stream()
+                    .forEach((order)-> productWithOrderID.getOrderDetails_id().add(order.getId()));
+            allProductsWithOrderId.add(productWithOrderID);
+        }
+
+        List<ProductWithOrderID> filteredList = new ArrayList<>();
+
+        for(ProductWithOrderID productDTO : allProductsWithOrderId){
+            if(productDTO.getName().toLowerCase().startsWith(filterParameter)) {
+                if (!filteredList.contains(productDTO)) {
+                    filteredList.add(productDTO);
+                }
+            }
+            if(productDTO.getDescription().toLowerCase().startsWith(filterParameter)){
+                if(!filteredList.contains(productDTO)){
+                    filteredList.add(productDTO);
+                }
+            }
+            if(productDTO.getCategory_name().toLowerCase().startsWith(filterParameter)){
+                if(!filteredList.contains(productDTO)){
+                    filteredList.add(productDTO);
+                }
+            }
+        }
+        return filteredList;
+    }
+
     @Override
     public ProductWithOrderID findById(Long id) {
         Product product = productRepository.findById(id).orElse(null);

@@ -36,6 +36,11 @@ public class ProductController extends AbsController<ProductDTO, ProductWithOrde
         return new ResponseEntity<>(productService.findAllPaginated(currentPageNumber, pageSize), HttpStatus.OK);
     }
 
+    @GetMapping
+    @RequestMapping("/filter/{filterParameter}")
+    public ResponseEntity<List<ProductWithOrderID>> findAllFiltered(@PathVariable("filterParameter") String filterParam){
+        return new ResponseEntity<>(productService.findAllFiltered(filterParam), HttpStatus.OK );
+    }
     @Override
     public ResponseEntity<ProductWithOrderID> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
