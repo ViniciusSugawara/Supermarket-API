@@ -29,6 +29,8 @@ public class Product extends BaseEntity{
     @ManyToOne
     @NonNull
     private Category category;
+    @NonNull
+    private Long price;
     @OneToMany(mappedBy = "product_order")
     private Set<OrderDetails> orderDetails = new HashSet<>();
 }

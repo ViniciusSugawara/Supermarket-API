@@ -18,5 +18,6 @@ public class ProductWithOrderID extends BaseDTO {
     private int quantity;
     private boolean status;
     private String category_name;
+    private Long price;
     private Set<Long> orderDetails_id = new HashSet<>();
 }
