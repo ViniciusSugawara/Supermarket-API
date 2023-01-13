@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import br.com.supermarketapi.models.Product;
 @Service
 @Qualifier("Product")
@@ -27,34 +29,14 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
 
     @Override
     public List<ProductWithOrderID> findAll() {
-        List<Product> listProducts = productRepository.findAll();
-        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
+        List<ProductWithOrderID> allProductsWithOrderId = mapToListOfProductWithOrderID(productRepository.findAll());
 
-        for (Product product: listProducts ) {
-            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
-            productWithOrderID.setCategory_name(product.getCategory().getName());
-
-            product.getOrderDetails()
-                    .stream()
-                    .forEach((order) -> productWithOrderID.getOrderDetails_id().add(order.getId()));
-            allProductsWithOrderId.add(productWithOrderID);
-        }
         return allProductsWithOrderId;
     }
 
-    public List<ProductWithOrderID> findAllSorted(String field){
-        List<Product> listProducts = productRepository.findAll(Sort.by(Sort.Direction.ASC, field));
-        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
+    public List<ProductWithOrderID> findAllSorted(String field){;
+        List<ProductWithOrderID> allProductsWithOrderId = mapToListOfProductWithOrderID(productRepository.findAll(Sort.by(Sort.Direction.ASC, field)));
 
-        for(Product product : listProducts){
-            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
-            productWithOrderID.setCategory_name(product.getCategory().getName());
-
-            product.getOrderDetails()
-                    .stream()
-                    .forEach((order)-> productWithOrderID.getOrderDetails_id().add(order.getId()));
-            allProductsWithOrderId.add(productWithOrderID);
-        }
         return allProductsWithOrderId;
     }
 
@@ -69,54 +51,21 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
     }
 
     public List<ProductWithOrderID> findAllFiltered(String filterParameter){
-        List<Product> listProducts = productRepository.findAll();
-        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
+        List<ProductWithOrderID> allProductsWithOrderId = mapToListOfProductWithOrderID(productRepository.findAll());
 
-        for(Product product : listProducts){
-            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
-            productWithOrderID.setCategory_name(product.getCategory().getName());
+        List<ProductWithOrderID> filteredList =
+                allProductsWithOrderId
+                        .stream()
+                        .filter(product -> product.getName().toLowerCase().startsWith(filterParameter)
+                                || product.getCategory_name().toLowerCase().startsWith(filterParameter)
+                                || product.getDescription().toLowerCase().startsWith(filterParameter))
+                        .collect(Collectors.toList());
 
-            product.getOrderDetails()
-                    .stream()
-                    .forEach((order)-> productWithOrderID.getOrderDetails_id().add(order.getId()));
-            allProductsWithOrderId.add(productWithOrderID);
-        }
-
-        List<ProductWithOrderID> filteredList = new ArrayList<>();
-
-        for(ProductWithOrderID productDTO : allProductsWithOrderId){
-            if(productDTO.getName().toLowerCase().startsWith(filterParameter)) {
-                if (!filteredList.contains(productDTO)) {
-                    filteredList.add(productDTO);
-                }
-            }
-            if(productDTO.getDescription().toLowerCase().startsWith(filterParameter)){
-                if(!filteredList.contains(productDTO)){
-                    filteredList.add(productDTO);
-                }
-            }
-            if(productDTO.getCategory_name().toLowerCase().startsWith(filterParameter)){
-                if(!filteredList.contains(productDTO)){
-                    filteredList.add(productDTO);
-                }
-            }
-        }
         return filteredList;
     }
 
     public List<ProductWithOrderID> findAllFilteredByPrice(Integer maximum, Integer minimum){
-        List<Product> listProducts = productRepository.findAll();
-        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
-
-        for(Product product : listProducts){
-            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
-            productWithOrderID.setCategory_name(product.getCategory().getName());
-
-            product.getOrderDetails()
-                    .stream()
-                    .forEach((order)-> productWithOrderID.getOrderDetails_id().add(order.getId()));
-            allProductsWithOrderId.add(productWithOrderID);
-        }
+        List<ProductWithOrderID> allProductsWithOrderId = mapToListOfProductWithOrderID(productRepository.findAll());
 
         List<ProductWithOrderID> filteredList = new ArrayList<>();
         for(ProductWithOrderID productDTO : allProductsWithOrderId){
@@ -189,5 +138,20 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
     @Override
     public void deleteById(Long id) {
         productRepository.deleteById(id);
+    }
+
+    private List<ProductWithOrderID> mapToListOfProductWithOrderID(List<Product> list) {
+        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
+
+        for(Product product : list){
+            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
+            productWithOrderID.setCategory_name(product.getCategory().getName());
+
+            product.getOrderDetails()
+                    .stream()
+                    .forEach((order)-> productWithOrderID.getOrderDetails_id().add(order.getId()));
+            allProductsWithOrderId.add(productWithOrderID);
+        }
+        return allProductsWithOrderId;
     }
 }
