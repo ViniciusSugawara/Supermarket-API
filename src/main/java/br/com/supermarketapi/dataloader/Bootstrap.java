@@ -46,12 +46,13 @@ public class Bootstrap implements CommandLineRunner {
         product1.setQuantity(1);
         product1.setStatus(true);
         product1.setCategory(category);
+        product1.setPrice(15l);
 
         productRepository.save(product1);
 
-        Product product2 = new Product("Orange", "A citric fruit","img/orange.png",1, true, category);
+        Product product2 = new Product("Orange", "A citric fruit","img/orange.png",1, true, category, 5l);
         productRepository.save(product2);
-        Product product3 = new Product("Guitar", "A musical instrument", "img/stratocaster.png", 2,true, category2);
+        Product product3 = new Product("Guitar", "A musical instrument", "img/stratocaster.png", 2,true, category2, 360l);
         productRepository.save(product3);
         System.out.println("Saved products.");
 

@@ -23,5 +23,6 @@ public class ProductDTO extends BaseDTO {
     private int quantity;
     private boolean status;
     private Category category;
+    private Long price;
     private Set<OrderDetails> orderDetails = new HashSet<>();
 }
