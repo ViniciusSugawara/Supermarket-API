@@ -41,6 +41,12 @@ public class ProductController extends AbsController<ProductDTO, ProductWithOrde
     public ResponseEntity<List<ProductWithOrderID>> findAllFiltered(@PathVariable("filterParameter") String filterParam){
         return new ResponseEntity<>(productService.findAllFiltered(filterParam), HttpStatus.OK );
     }
+
+    @GetMapping
+    @RequestMapping("/filter/price/{maximum}/{minimum}")
+    public ResponseEntity<List<ProductWithOrderID>> findAllFilteredByPrice(@PathVariable("maximum")Integer maximum, @PathVariable("minimum")Integer minimum){
+        return new ResponseEntity<>(productService.findAllFilteredByPrice(maximum, minimum), HttpStatus.OK);
+    }
     @Override
     public ResponseEntity<ProductWithOrderID> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
