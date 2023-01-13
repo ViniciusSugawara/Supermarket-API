@@ -1,12 +1,10 @@
 package br.com.supermarketapi.services;
 
-import br.com.supermarketapi.dtos.OrderDetailsDTO;
-import br.com.supermarketapi.dtos.ProductDTO;
+import br.com.supermarketapi.dtos.input.OrderDetailsDTO;
+import br.com.supermarketapi.dtos.output.OrderDetailsWithIDs;
 import br.com.supermarketapi.models.OrderDetails;
-import br.com.supermarketapi.models.Product;
 import br.com.supermarketapi.repositories.OrderDetailsRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Service
 @Qualifier("OrderDetails")
-public class OrderDetailsService implements CrudService<OrderDetailsDTO, Long> {
+public class OrderDetailsService implements CrudService<OrderDetailsDTO, OrderDetailsWithIDs, Long> {
     private OrderDetailsRepository orderDetailsRepository;
     private ModelMapper mapper = new ModelMapper();
 
@@ -23,21 +21,26 @@ public class OrderDetailsService implements CrudService<OrderDetailsDTO, Long> {
     }
 
     @Override
-    public List<OrderDetailsDTO> findAll() {
-        List<OrderDetails> listOrder = orderDetailsRepository.findAll();
-        List<OrderDetailsDTO> listOrderDTO= new ArrayList<>();
+    public List<OrderDetailsWithIDs> findAll() {
+        List<OrderDetails> allListOrders = orderDetailsRepository.findAll();
+        List<OrderDetailsWithIDs> listOrderDTO = new ArrayList<>();
 
-        for (OrderDetails order: listOrder ) {
-            OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO();
-            BeanUtils.copyProperties(order , orderDetailsDTO);
-            listOrderDTO.add(orderDetailsDTO);
+        for(OrderDetails orderDetails : allListOrders){
+            OrderDetailsWithIDs target = mapper.map(orderDetails, OrderDetailsWithIDs.class);
+            target.setProduct_order_id(orderDetails.getProduct_order().getId());
+            target.setClientList_id(orderDetails.getClientList().getId());
+            listOrderDTO.add(target);
         }
         return listOrderDTO;
     }
 
     @Override
-    public OrderDetailsDTO findById(Long id) {
-        return mapper.map(orderDetailsRepository.findById(id).orElse(null), OrderDetailsDTO.class);
+    public OrderDetailsWithIDs findById(Long id) {
+        OrderDetails orderDetails = orderDetailsRepository.findById(id).orElse(null);
+        OrderDetailsWithIDs target = mapper.map(orderDetails, OrderDetailsWithIDs.class);
+        target.setProduct_order_id(orderDetails.getProduct_order().getId());
+        target.setClientList_id(orderDetails.getClientList().getId());
+        return target;
     }
 
     @Override

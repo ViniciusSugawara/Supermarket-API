@@ -1,21 +1,20 @@
 package br.com.supermarketapi.controllers;
 
-import br.com.supermarketapi.dtos.OrderDetailsDTO;
+import br.com.supermarketapi.dtos.input.OrderDetailsDTO;
+import br.com.supermarketapi.dtos.output.OrderDetailsWithIDs;
 import br.com.supermarketapi.services.OrderDetailsService;
-import jakarta.persistence.criteria.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("orderDetails")
-public class OrderDetailsController extends AbsController<OrderDetailsDTO> {
+public class OrderDetailsController extends AbsController<OrderDetailsDTO, OrderDetailsWithIDs> {
     private OrderDetailsService orderDetailsService;
 
     public OrderDetailsController(OrderDetailsService orderDetailsService) {
@@ -23,33 +22,33 @@ public class OrderDetailsController extends AbsController<OrderDetailsDTO> {
     }
 
     @Override
-    public ResponseEntity<List<OrderDetailsDTO>> findAll() {
+    public ResponseEntity<List<OrderDetailsWithIDs>> findAll() {
         return new ResponseEntity<>(orderDetailsService.findAll(), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<OrderDetailsDTO> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<OrderDetailsWithIDs> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(orderDetailsService.findById(id), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<OrderDetailsDTO> save(OrderDetailsDTO object) {
+    public ResponseEntity<OrderDetailsDTO> save(@RequestBody OrderDetailsDTO object) {
         return new ResponseEntity<>(orderDetailsService.save(object), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<OrderDetailsDTO> update(OrderDetailsDTO object) {
+    public ResponseEntity<OrderDetailsDTO> update(@RequestBody OrderDetailsDTO object) {
         return new ResponseEntity<>(orderDetailsService.update(object), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity delete(OrderDetailsDTO object) {
+    public ResponseEntity delete(@RequestBody OrderDetailsDTO object) {
         orderDetailsService.delete(object);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity deleteById(Long id) {
+    public ResponseEntity deleteById(@PathVariable("id") Long id) {
         orderDetailsService.deleteById(id);
         return new ResponseEntity(HttpStatus.OK);
     }

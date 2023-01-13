@@ -1,6 +1,7 @@
 package br.com.supermarketapi.services;
 
-import br.com.supermarketapi.dtos.ClientListDTO;
+import br.com.supermarketapi.dtos.input.ClientListDTO;
+import br.com.supermarketapi.dtos.output.ClientListWithOrderID;
 import br.com.supermarketapi.models.ClientList;
 import br.com.supermarketapi.models.OrderDetails;
 import br.com.supermarketapi.models.Product;
@@ -14,9 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 @Service
 @Qualifier("ListOfProducts")
-public class ClientListService implements CrudService<ClientListDTO,Long> {
+public class ClientListService implements CrudService<ClientListDTO, ClientListWithOrderID, Long> {
     private ClientListRepository clientListRepository;
-    private ClientList clientList = new ClientList();
     private ModelMapper mapper = new ModelMapper();
 
     public ClientListService(ClientListRepository clientListRepository) {
@@ -24,67 +24,56 @@ public class ClientListService implements CrudService<ClientListDTO,Long> {
     }
 
     @Override
-    public List<ClientListDTO> findAll() {
-        List<ClientList> listOfProductsList = clientListRepository.findAll();
-        List<ClientListDTO> ClientListDTOList = new ArrayList<>();
+    public List<ClientListWithOrderID> findAll() {
+        List<ClientList> allClientLists = clientListRepository.findAll();
+        List<ClientListWithOrderID> allClientListWithOrderId = new ArrayList<>();
 
-        for (ClientList clientList : listOfProductsList ) {
-            ClientListDTO clientListDTO = new ClientListDTO();
-            BeanUtils.copyProperties(filterList(clientList), clientListDTO);
-            ClientListDTOList.add(clientListDTO);
+        for(ClientList clientList : allClientLists){
+            ClientListWithOrderID target = mapper.map(clientList, ClientListWithOrderID.class);
+            clientList.getOrderDetails()
+                      .stream()
+                      .forEach((order) -> target
+                                          .getOrderDetails_id()
+                                          .add(order.getId())
+                      );
+            allClientListWithOrderId.add(target);
         }
-        return ClientListDTOList;
+        return allClientListWithOrderId;
     }
 
     @Override
-    public ClientListDTO findById(Long id) {
-        return mapper.map(clientListRepository.findById(id).orElse(null), ClientListDTO.class);
+    public ClientListWithOrderID findById(Long id) {
+        ClientList clientList = clientListRepository.findById(id).orElse(null);
+        ClientListWithOrderID clientListWithOrderID = mapper.map(clientList, ClientListWithOrderID.class);
+
+        for(OrderDetails order : clientList.getOrderDetails()){
+            clientListWithOrderID.getOrderDetails_id().add(order.getId());
+        }
+
+        return clientListWithOrderID;
+        //return mapper.map(clientListRepository.findById(id).orElse(null), ClientListDTO.class);
     }
 
     @Override
     public ClientListDTO save(ClientListDTO object) {
-//        for(Product product : object.getProducts()){
-//            this.listOfProducts.getProducts().add(product);
-//        }
-        BeanUtils.copyProperties(object, this.clientList);
-        clientListRepository.save(this.clientList);
+        clientListRepository.save(mapper.map(object, ClientList.class));
         return object;
     }
 
-    //By now, will be using this method to update products inside the list, changing their quantities using RequestBody.
-    //Should have a dedicated method with respective business logic.
+
     @Override
     public ClientListDTO update(ClientListDTO object) {
-        BeanUtils.copyProperties(object, this.clientList);
-        clientListRepository.save(clientList);
+        clientListRepository.save(mapper.map(object, ClientList.class));
         return object;
     }
 
     @Override
     public void delete(ClientListDTO object) {
-        BeanUtils.copyProperties(object, this.clientList);
-        clientListRepository.delete(clientList);
+        clientListRepository.delete(mapper.map(object, ClientList.class));
     }
 
     @Override
     public void deleteById(Long id) {
         clientListRepository.deleteById(id);
-    }
-
-    private ClientListDTO filterList(ClientList clientList){
-        List<Product> filteredProducts = new ArrayList<>();
-        ClientListDTO clientListDTO = new ClientListDTO();
-        BeanUtils.copyProperties(clientList, clientListDTO);
-
-        for(OrderDetails order : clientList.getOrderDetails()){
-            filteredProducts.add(filterListProducts(order.getProduct_order()));
-        }
-        clientListDTO.setOrderDetails(clientList.getOrderDetails());
-        return clientListDTO;
-    }
-    private Product filterListProducts(Product product){
-        Product prototype = new Product();
-        BeanUtils.copyProperties(product, prototype , "productList");
-        return prototype;
     }
 }

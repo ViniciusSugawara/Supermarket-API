@@ -1,5 +1,6 @@
 package br.com.supermarketapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,15 +9,11 @@ import java.util.Set;
 
 //Represents the product entity, which will be manipulated by the Admin user
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private Long id;
+public class Product extends BaseEntity{
     @NonNull
     private String name;
     @NonNull
@@ -29,6 +26,9 @@ public class Product {
     private int quantity;
     @NonNull
     private boolean status;
+    @ManyToOne
+    @NonNull
+    private Category category;
     @OneToMany(mappedBy = "product_order")
     private Set<OrderDetails> orderDetails = new HashSet<>();
 }

@@ -22,7 +22,7 @@
       <td th:text="${product.id}"> 1 </td>
       <td th:text="${product.name}"> name </td>
       <td th:text="${product.description}"> description </td>
-      <td th:text="${product.image}"> path of image </td>
+      <td><img th:src= "@{../../static/img/apple.png}" height="100" width="100"/></td>
       <td th:number="${product.quantity}"> quantity </td>
       <td th:text="${product.status}"> status </td>
     </tr>

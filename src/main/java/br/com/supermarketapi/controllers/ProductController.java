@@ -1,31 +1,43 @@
 package br.com.supermarketapi.controllers;
 
+import br.com.supermarketapi.dtos.output.ProductWithOrderID;
 import br.com.supermarketapi.models.Product;
 import br.com.supermarketapi.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
-import br.com.supermarketapi.dtos.ProductDTO;
+import br.com.supermarketapi.dtos.input.ProductDTO;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/products")
-public class ProductController extends AbsController<ProductDTO> {
+public class ProductController extends AbsController<ProductDTO, ProductWithOrderID> {
     private ProductService productService;
     public ProductController(ProductService productService) {
          this.productService = productService;
     }
 
     @Override
-    public ResponseEntity<List<ProductDTO>> findAll() {
+    public ResponseEntity<List<ProductWithOrderID>> findAll() {
         return new ResponseEntity(productService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping
+    @RequestMapping("/sorted/{field}")
+    public ResponseEntity<List<ProductWithOrderID>> findAllSorted(@PathVariable(value = "field") String field){
+        return new ResponseEntity<>(productService.findAllSorted(field), HttpStatus.OK);
+    }
+    @GetMapping
+    @RequestMapping("/paginated/{pageNumber}/{size}")
+    public ResponseEntity<Page<ProductWithOrderID>> findAllPaginated(@PathVariable("pageNumber") Integer currentPageNumber, @PathVariable("size") Integer pageSize){
+        return new ResponseEntity<>(productService.findAllPaginated(currentPageNumber, pageSize), HttpStatus.OK);
+    }
+
     @Override
-    public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<ProductWithOrderID> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
     }
 

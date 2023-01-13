@@ -1,6 +1,6 @@
 package br.com.supermarketapi.webcontrollers;
 
-import br.com.supermarketapi.dtos.ProductDTO;
+import br.com.supermarketapi.dtos.input.ProductDTO;
 import br.com.supermarketapi.services.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +23,7 @@ public class AdminWebController {
     @GetMapping("/products")
     public String listProducts(Model model){
         model.addAttribute("products", productService.findAll());
-        return "list-products";
+        return "admin/list-products";
     }
 
     @RequestMapping("/product/{id}")

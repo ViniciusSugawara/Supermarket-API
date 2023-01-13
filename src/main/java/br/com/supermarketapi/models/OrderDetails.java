@@ -1,17 +1,16 @@
 package br.com.supermarketapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class OrderDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @EqualsAndHashCode.Include
-    private Long id;
+@Getter
+@Setter
+public class OrderDetails extends BaseEntity{
     @ManyToOne
     private Product product_order;
 
