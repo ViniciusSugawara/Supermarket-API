@@ -4,23 +4,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-//Represents all base entities that will be used
-//@MappedSuperclass
+import java.util.Objects;
 
-/**
- * Yet to be used class, will be refactored later to reduce code repetition
- */
+@Getter
+@Setter
+@MappedSuperclass
 public abstract class BaseEntity {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    public Long id;
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseEntity that = (BaseEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List of products</title>
+</head>
+<body>
+  <h1> Here's a table containing all current products! </h1>
+  <table>
+    <thead>
+      <tr>
+        <th> ID </th>
+        <th> Name </th>
+        <th> Description </th>
+        <th> Image </th>
+        <th> Quantity </th>
+        <th> Status </th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product: ${products}">
+      <td th:text="${product.id}"> 1 </td>
+      <td th:text="${product.name}"> name </td>
+      <td th:text="${product.description}"> description </td>
+      <td><img th:src= "@{../../static/img/apple.png}" height="100" width="100"/></td>
+      <td th:number="${product.quantity}"> quantity </td>
+      <td th:text="${product.status}"> status </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="index.html" th:text="'Click here if you want to return to the last page'"> Link goes here </a> <br>
+  <a href="../" th:text="'Click here if you want to return to the first page'"> Link goes here </a>
+</body>
+</html>

@@ -1,9 +1,9 @@
 package br.com.supermarketapi.repositories;
 
-import br.com.supermarketapi.models.Product;
+import br.com.supermarketapi.models.ClientList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ClientListRepository extends JpaRepository<ClientList, Long> {
 }

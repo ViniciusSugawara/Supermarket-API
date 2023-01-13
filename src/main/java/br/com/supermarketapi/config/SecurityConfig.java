@@ -24,10 +24,23 @@ public class SecurityConfig{
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http.csrf().disable()
-                    .authorizeHttpRequests((authz) -> authz.requestMatchers(HttpMethod.POST, "/product").hasRole("ADMIN")
+                    .authorizeHttpRequests((authz) -> authz.requestMatchers("/static")
+                            .permitAll()
+                            .requestMatchers("/admin").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/product").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET,"/products", "/product/**").hasRole("ADMIN")
-                            .anyRequest().fullyAuthenticated()
+                            .requestMatchers("/admin").hasRole("ADMIN")
+                            .anyRequest().authenticated()
                     )
+                    .formLogin()
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/index")
+                    .permitAll()
+                    .and()
+                    .headers()
+                    .frameOptions()
+                    .disable()
+                    .and()
                     .httpBasic(withDefaults());
             return http.build();
         }
