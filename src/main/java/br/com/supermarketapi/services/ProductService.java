@@ -104,6 +104,29 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
         return filteredList;
     }
 
+    public List<ProductWithOrderID> findAllFilteredByPrice(Integer maximum, Integer minimum){
+        List<Product> listProducts = productRepository.findAll();
+        List<ProductWithOrderID> allProductsWithOrderId = new ArrayList<>();
+
+        for(Product product : listProducts){
+            ProductWithOrderID productWithOrderID = mapper.map(product, ProductWithOrderID.class);
+            productWithOrderID.setCategory_name(product.getCategory().getName());
+
+            product.getOrderDetails()
+                    .stream()
+                    .forEach((order)-> productWithOrderID.getOrderDetails_id().add(order.getId()));
+            allProductsWithOrderId.add(productWithOrderID);
+        }
+
+        List<ProductWithOrderID> filteredList = new ArrayList<>();
+        for(ProductWithOrderID productDTO : allProductsWithOrderId){
+            if(productDTO.getPrice() < maximum && productDTO.getPrice() > minimum){
+                filteredList.add(productDTO);
+            }
+        }
+        return filteredList;
+    }
+
     @Override
     public ProductWithOrderID findById(Long id) {
         Product product = productRepository.findById(id).orElse(null);
