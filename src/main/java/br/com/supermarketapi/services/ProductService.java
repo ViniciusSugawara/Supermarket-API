@@ -1,5 +1,6 @@
 package br.com.supermarketapi.services;
 
+import br.com.supermarketapi.dtos.ProductIDandName;
 import br.com.supermarketapi.dtos.input.ProductDTO;
 import br.com.supermarketapi.dtos.output.ProductWithOrderID;
 import br.com.supermarketapi.repositories.ProductRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,10 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
         return allProductsWithOrderId;
     }
 
+    public List<ProductIDandName> findAllByIdAndName(){
+        return productRepository.findAllProductsIdAndName();
+    }
+
     public List<ProductWithOrderID> findAllSorted(String field){;
         List<ProductWithOrderID> allProductsWithOrderId = mapToListOfProductWithOrderID(productRepository.findAll(Sort.by(Sort.Direction.ASC, field)));
 
@@ -42,6 +48,34 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
 
     public Page<ProductWithOrderID> findAllPaginated(int currentPageNumber, int size){
         Page<Product> productPage = productRepository.findAll(PageRequest.of(currentPageNumber, size));
+
+        Page<ProductWithOrderID> productDTOPage = productPage.map((entity) -> {
+            ProductWithOrderID dto = mapper.map(entity, ProductWithOrderID.class);
+            dto.setCategory_name(entity.getCategory().getName());
+            return dto;
+        });
+        return productDTOPage;
+    }
+
+    public Page<ProductWithOrderID> findAllPaginated(int currentPageNumber, int size, String field){
+        Page<Product> productPage = productRepository.findAll(PageRequest.of(currentPageNumber, size, Sort.by(field)));
+
+        Page<ProductWithOrderID> productDTOPage = productPage.map((entity) -> {
+            ProductWithOrderID dto = mapper.map(entity, ProductWithOrderID.class);
+            dto.setCategory_name(entity.getCategory().getName());
+            return dto;
+        });
+        return productDTOPage;
+    }
+
+    public Page<ProductWithOrderID> findAllPaginated(int currentPageNumber, int size, String field, String order){
+        Page<Product> productPage;
+        if(order.toLowerCase().startsWith("asc")) {
+            productPage = productRepository.findAll(PageRequest.of(currentPageNumber, size, Sort.by(field).ascending()));
+        } else {
+            productPage = productRepository.findAll(PageRequest.of(currentPageNumber, size, Sort.by(field).descending()));
+        }
+
         Page<ProductWithOrderID> productDTOPage = productPage.map((entity) -> {
             ProductWithOrderID dto = mapper.map(entity, ProductWithOrderID.class);
             dto.setCategory_name(entity.getCategory().getName());
@@ -76,6 +110,11 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
         return filteredList;
     }
 
+    public List<ProductWithOrderID> findAllWithFilters(String... parameters){
+        List<ProductWithOrderID> allProductsWithOrderId = mapToListOfProductWithOrderID(productRepository.findAll());
+        return allProductsWithOrderId;
+    }
+
     @Override
     public ProductWithOrderID findById(Long id) {
         Product product = productRepository.findById(id).orElse(null);
@@ -108,8 +147,12 @@ public class ProductService implements CrudService<ProductDTO, ProductWithOrderI
 
     @Override
     public ProductDTO save(ProductDTO object) {
-        productRepository.save(mapper.map(object, Product.class));
-        return object;
+        return mapper.map(
+                productRepository.save(
+                        mapper.map(object, Product.class)
+                ),
+                ProductDTO.class
+        );
     }
 
     @Override

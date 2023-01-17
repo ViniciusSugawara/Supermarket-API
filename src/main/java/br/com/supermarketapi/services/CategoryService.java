@@ -54,8 +54,11 @@ public class CategoryService implements CrudService<CategoryDTO, CategoryWithPro
 
     @Override
     public CategoryDTO save(CategoryDTO object) {
-        categoryRepository.save(mapper.map(object, Category.class));
-        return object;
+        return mapper.map(
+                categoryRepository.save(
+                        mapper.map(object, Category.class)
+                ),
+                CategoryDTO.class);
     }
 
     @Override

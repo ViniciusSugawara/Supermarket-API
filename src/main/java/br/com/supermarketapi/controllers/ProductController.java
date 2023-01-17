@@ -1,5 +1,6 @@
 package br.com.supermarketapi.controllers;
 
+import br.com.supermarketapi.dtos.ProductIDandName;
 import br.com.supermarketapi.dtos.output.ProductWithOrderID;
 import br.com.supermarketapi.models.Product;
 import br.com.supermarketapi.services.ProductService;
@@ -26,25 +27,34 @@ public class ProductController extends AbsController<ProductDTO, ProductWithOrde
     }
 
     @GetMapping
+    @RequestMapping("/byId")
+    public ResponseEntity<List<ProductIDandName>> findAllByIdAndName(){
+        return new ResponseEntity(productService.findAllByIdAndName(), HttpStatus.OK);
+    }
+
+    @GetMapping
     @RequestMapping("/sorted/{field}")
     public ResponseEntity<List<ProductWithOrderID>> findAllSorted(@PathVariable(value = "field") String field){
         return new ResponseEntity<>(productService.findAllSorted(field), HttpStatus.OK);
     }
     @GetMapping
-    @RequestMapping("/paginated/{pageNumber}/{size}")
-    public ResponseEntity<Page<ProductWithOrderID>> findAllPaginated(@PathVariable("pageNumber") Integer currentPageNumber, @PathVariable("size") Integer pageSize){
-        return new ResponseEntity<>(productService.findAllPaginated(currentPageNumber, pageSize), HttpStatus.OK);
+    @RequestMapping("/paginated/")
+    public ResponseEntity<Page<ProductWithOrderID>> findAllPaginated(@RequestParam("pageNumber") Integer currentPageNumber,
+                                                                     @RequestParam("size") Integer pageSize,
+                                                                     @RequestParam(required = false, value = "field", defaultValue = "id")String field,
+                                                                     @RequestParam(required = false, value = "order", defaultValue = "asc")String order){
+        return new ResponseEntity<>(productService.findAllPaginated(currentPageNumber, pageSize, field, order), HttpStatus.OK);
     }
 
     @GetMapping
-    @RequestMapping("/filter/{filterParameter}")
-    public ResponseEntity<List<ProductWithOrderID>> findAllFiltered(@PathVariable("filterParameter") String filterParam){
+    @RequestMapping("/filtered/")
+    public ResponseEntity<List<ProductWithOrderID>> findAllFiltered(@RequestParam("filterParameter") String filterParam){
         return new ResponseEntity<>(productService.findAllFiltered(filterParam), HttpStatus.OK );
     }
 
     @GetMapping
-    @RequestMapping("/filter/price/{maximum}/{minimum}")
-    public ResponseEntity<List<ProductWithOrderID>> findAllFilteredByPrice(@PathVariable("maximum")Integer maximum, @PathVariable("minimum")Integer minimum){
+    @RequestMapping("/filtered/price/")
+    public ResponseEntity<List<ProductWithOrderID>> findAllFilteredByPrice(@RequestParam(value = "maximum", defaultValue = "10000")Integer maximum, @RequestParam(value = "minimum", defaultValue = "0")Integer minimum){
         return new ResponseEntity<>(productService.findAllFilteredByPrice(maximum, minimum), HttpStatus.OK);
     }
     @Override
